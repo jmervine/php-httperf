@@ -50,3 +50,13 @@ $results = $httperf->run();
 print_r($results);
 
 ```
+
+
+## Development
+
+Please feel free to submit pull requests as this is my first stab at PHP in about 10 years. Before submitting a pull request, though, please make sure to update (if necessary) and run unit tests.
+
+```
+make test
+```
+

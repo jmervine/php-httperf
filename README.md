@@ -11,17 +11,14 @@ Requires [httperf](http://mervine.net/httperf), of course...
 
 #### Mac
 
-    :::shell
     sudo port install httperf
 
 #### Debian / Ubuntu
 
-    :::shell
     sudo apt-get install httperf
 
 #### Redhat / CentOS
 
-    :::shell
     sudo yum install httperf
 
 #### My 'httperf'

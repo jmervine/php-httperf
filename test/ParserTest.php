@@ -1,6 +1,16 @@
 <?php
 require_once 'helper.php';
 
+/***
+ * Note:
+ *
+ * In the tests below, I'm calling 'new Parser()' to access the private methods
+ * for testing. However, in real use, Parser shouldn't be instantiated. Instead
+ * call the parse method like so:
+ *
+ * Parser::parse($output);
+ */
+
 class ParserTest extends UnitTestCase {
 
   function test_verbose_expression() {
@@ -75,10 +85,8 @@ class ParserTest extends UnitTestCase {
   }
 
   function test_parser_verbose() {
-    $parser = new Parser();
-
     exec(TestHelper::httperf('--verbose --url /foo'), $out, $status);
-    $matches = $parser->parse($out);
+    $matches = Parser::parse($out);
 
     // verbose connections times
     $this->assertTrue(isset($matches['connection_times']));

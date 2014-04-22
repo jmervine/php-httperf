@@ -2,7 +2,7 @@
 require_once dirname(__FILE__) . '/Parser.php';
 
 class HTTPerf {
-  function __construct($options=array(), $path=null) {
+  public function __construct($options=array(), $path=null) {
 
     // check and set parse
     $this->parse = false;
@@ -62,11 +62,11 @@ class HTTPerf {
     $this->options = array_merge(self::params(), $options);
   }
 
-  function update_options($opt, $val) {
+  public function update_options($opt, $val) {
     $this->options[$opt] = $val;
   }
 
-  function options() {
+  public function options() {
     $options = array();
     foreach ($this->options as $key => $val) {
       if (isset($val)) {
@@ -90,7 +90,7 @@ class HTTPerf {
     return join(' ', $options);
   }
 
-  function command() {
+  public function command() {
     if (isset($this->command)) {
       return $this->command;
     }
@@ -98,7 +98,7 @@ class HTTPerf {
     return $this->httperf . ' ' . self::options() . ' 2>&1';
   }
 
-  function run() {
+  public function run() {
     exec(self::command(), $output, $status);
     if ($status != 0) {
       throw new Exception('httperf exited with  status ' .
@@ -108,14 +108,13 @@ class HTTPerf {
     }
 
     if (isset($this->parse) && $this->parse) {
-      $parser = new Parser();
-      return $parser->parse($output);
+      return Parser::parse($output);
     }
 
     return join('\n', $output);
   }
 
-  private function params() {
+  private static function params() {
     return array(
       'add-header'       => null,
       'burst-length'     => null,
@@ -156,5 +155,4 @@ class HTTPerf {
       'wset'             => null
     );
   }
-
 }

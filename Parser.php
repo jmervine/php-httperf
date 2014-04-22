@@ -1,6 +1,6 @@
 <?php
 class Parser {
-  function parse($raw) {
+  public static function parse($raw) {
     if (is_string($raw)) $raw = explode('\n', $raw);
 
     $verbose = false;
@@ -11,14 +11,14 @@ class Parser {
       if (empty($line)) continue;
 
       // verbose connection timing
-      preg_match($this->verbose_expression(), $line, $match);
+      preg_match(self::verbose_expression(), $line, $match);
       if (isset($match[1])) {
         array_push($verbose_connection_times, $match[1]);
         continue;
       }
 
       // output parsing
-      foreach ($this->expressions() as $key => $expression) {
+      foreach (self::expressions() as $key => $expression) {
         if (!isset($matches[$key])) {
           preg_match($expression, $line, $match);
           if (isset($match[1])) $matches[$key] = $match[1];
@@ -29,8 +29,8 @@ class Parser {
     if (!empty($verbose_connection_times)) {
       $verbose = true;
 
-      foreach ($this->percentiles() as $percentile) {
-        $matches['connection_time_'.$percentile.'_pct'] = $this->calculate_percentiles($percentile, $verbose_connection_times);
+      foreach (self::percentiles() as $percentile) {
+        $matches['connection_time_'.$percentile.'_pct'] = self::calculate_percentiles($percentile, $verbose_connection_times);
       }
 
       $matches['connection_times'] = $verbose_connection_times;
@@ -39,11 +39,11 @@ class Parser {
     return $matches;
   }
 
-  private function verbose_expression() {
+  private static function verbose_expression() {
     return '/^Connection lifetime = ([0-9]+\.[0-9]+)(\s?)/';
   }
 
-  private function expressions() {
+  private static function expressions() {
       return array(
         'command'                    => '/^(httperf .+)$/',
 
@@ -126,11 +126,11 @@ class Parser {
       );
   }
 
-  private function percentiles() {
+  private static function percentiles() {
     return array(75, 80, 85, 90, 95, 99);
   }
 
-  private function calculate_percentiles($percentile, $values) {
+  private static function calculate_percentiles($percentile, $values) {
     $len = count($values);
 
     if ($len == 1) return reset($values);

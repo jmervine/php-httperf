@@ -99,6 +99,12 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertEqual('--hog --uri=/foo', $httperf->options());
   }
 
+  function test_params() {
+    $method = TestHelper::get_private('HTTPerf', 'params');
+    $params = $method->invoke(new HTTPerf());
+    $this->assertEqual(37, count($params));
+  }
+
   function test_command() {
     $opts = array(
       'uri'     => '/foo',

@@ -133,8 +133,8 @@ class Parser {
   private static function calculate_percentiles($percentile, $values) {
     $len = count($values);
 
-    if ($len == 1) return reset($values);
-    if ($len == 2) return end($values);
+    if ($len === 1) return reset($values);
+    if ($len === 2) return end($values);
 
     sort($values);
 

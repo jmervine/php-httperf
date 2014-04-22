@@ -11,16 +11,18 @@ class HTTPerf {
       unset($options['parse']);
     }
 
+    // TODO: Implement 'tee' support.
+    //
     // check and set tee
-    $this->tee = false;
-    if (isset($options['tee'])) {
-      $this->tee = $options['tee'];
-      unset($options['tee']);
-    }
+    //$this->tee = false;
+    //if (isset($options['tee'])) {
+      //$this->tee = $options['tee'];
+      //unset($options['tee']);
+    //}
 
     // check and set command
     if (isset($options['command'])) {
-      if (count($options) != 1) {
+      if (count($options) !== 1) {
         throw new Exception('Option command must not be passed with other options.');
       }
 
@@ -70,14 +72,14 @@ class HTTPerf {
     $options = array();
     foreach ($this->options as $key => $val) {
       if (isset($val)) {
-        if ($key == 'hog') {
+        if ($key === 'hog') {
           if ($val) {
             array_push($options, '--hog');
           }
           continue;
         }
 
-        if ($key == 'verbose') {
+        if ($key === 'verbose') {
           if ($val) {
             array_push($options, '--verbose');
           }
@@ -100,7 +102,7 @@ class HTTPerf {
 
   public function run() {
     exec(self::command(), $output, $status);
-    if ($status != 0) {
+    if ($status !== 0) {
       throw new Exception('httperf exited with  status ' .
                             $status .
                             '\n\nhttperf errors:\n----------\n' .

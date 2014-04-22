@@ -8,13 +8,13 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertEqual(37 , count($httperf->options));
 
     $this->assertFalse($httperf->parse);
-    $this->assertFalse($httperf->tee);
+    //$this->assertFalse($httperf->tee);
   }
 
   function test_init_params() {
     $opts = array(
       'uri'   => 'bar',
-      'tee'   => true,
+      //'tee'   => true,
       'parse' => false
     );
 
@@ -22,11 +22,11 @@ class HTTPerfTest extends UnitTestCase {
 
     $this->assertEqual(37 , count($httperf->options));
 
-    $this->assertFalse(isset($this->options['tee']));
+    //$this->assertFalse(isset($this->options['tee']));
     $this->assertFalse(isset($this->options['parse']));
 
     $this->assertFalse($httperf->parse);
-    $this->assertTrue($httperf->tee);
+    //$this->assertTrue($httperf->tee);
 
     $this->assertEqual('bar', $httperf->options['uri']);
     $this->assertEqual('test/support/httperf' , $httperf->httperf);
@@ -126,7 +126,7 @@ class HTTPerfTest extends UnitTestCase {
       'verbose' => false
     );
 
-    $httperf = new HTTPerf($opts, 'test/support/httperf');
+    $httperf = new HTTPerf($opts);
 
     $result = $httperf->run();
 
@@ -140,7 +140,7 @@ class HTTPerfTest extends UnitTestCase {
       'parse'   => true
     );
 
-    $httperf = new HTTPerf($opts, 'test/support/httperf');
+    $httperf = new HTTPerf($opts);
     $result = $httperf->run();
 
     $this->assertFalse(isset($result['connection_times']));
@@ -163,7 +163,7 @@ class HTTPerfTest extends UnitTestCase {
       'parse'   => true
     );
 
-    $httperf = new HTTPerf($opts, 'test/support/httperf');
+    $httperf = new HTTPerf($opts);
     $result = $httperf->run();
 
     $this->assertTrue(isset($result['connection_times']));

@@ -33,13 +33,13 @@ See: [httperf-0.9.1 with individual connection times](http://mervine.net/httperf
 require_once 'HTTPerf.php';
 
 $options = array(
-    'server'    => 'www.example.com',
-    'uri'       => '/foo/bar',
-    'rate'      => 10,
-    'num-conns' => 1000,
-    'verbose'   => true,
-    'hog'       => true,
-    'parse'     => true
+    "server"    => "www.example.com",
+    "uri"       => "/foo/bar",
+    "rate"      => 10,
+    "num-conns" => 1000,
+    "verbose"   => true,
+    "hog"       => true,
+    "parse"     => true
 );
 
 $httperf = new HTTPerf();

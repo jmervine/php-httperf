@@ -1,9 +1,16 @@
-HTTPerf.php
+HTTPerf.php [![Build Status](https://travis-ci.org/jmervine/php-httperf.svg?branch=master)](https://travis-ci.org/jmervine/php-httperf)
 -----------
 
 ##### Simple PHP port of [HTTPerf.rb](https://github.com/jmervine/httperfrb)
 
-Simple PHP interface for httperf.
+Simple PHP interface for [httperf](http://mervine.net/httperf).
+
+Tested via [Travis-CI](https://travis-ci.org/jmervine/php-httperf) on:
+
+* PHP 5.3
+* PHP 5.4
+* PHP 5.5
+* HHVM
 
 ## Installing 'httperf'
 

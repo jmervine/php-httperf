@@ -53,6 +53,10 @@ $httperf = new HTTPerf();
 $results = $httperf->run();
 print_r($results);
 
+$httperf->updateOptions("uri", "www.google.com");
+$results = $httperf->run();
+print_r($results);
+
 ```
 
 

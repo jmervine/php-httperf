@@ -1,17 +1,50 @@
 <?php
+/**
+ * HTTPerf
+ *
+ * @author Joshua P. Mervine <joshua@mervine.net>
+ * @version 1.0.0
+ *
+ * Primary class for HTTPerf.php.
+ *
+ *  require_once('HTTPerf.php');
+ *  $httperf = new HTTPerf($options);
+ *  echo $httperf->run();
+ *
+ *  $httperf = new HTTPerf($options);
+ *  $httperf->parse = true;
+ *  print_r($httperf->run());
+ *
+ */
+
 require_once dirname(__FILE__) . "/Parser.php";
 
+/**
+ * HTTPerf class to be instantiated.
+ */
 class HTTPerf {
+  /**
+   * Constructor
+   *
+   * @param mixed[] $options Array of options.
+   * @param string $path Path to custom 'httperf' install.
+   *
+   * @throws Exception if $options['command'] and other $options are passed together.
+   * @throws Exception if $options['command'] does not contain 'httperf'.
+   * @throws Exception if $options[] key is not a valid httperf argument.
+   * @throws Exception if 'httperf' binary is not found.
+   * @throws Exception if found 'httperf' binary is not executable.
+   */
   public function __construct($options=array(), $path=null) {
 
-    // check and set parse
+    /* check and set parse */
     $this->parse = false;
     if (isset($options["parse"])) {
       $this->parse = $options["parse"];
       unset($options["parse"]);
     }
 
-    // check and set command
+    /* check and set command */
     if (isset($options["command"])) {
       if (count($options) !== 1)
         throw new Exception("Option command must not be passed with other options.");
@@ -23,13 +56,13 @@ class HTTPerf {
       unset($options["command"]);
     }
 
-    // validate remaining options
+    /* validate remaining options */
     foreach ($options as $key => $val) {
       if (!array_key_exists($key, self::params()))
         throw new Exception("\"".$key."\" is an invalid param.");
     }
 
-    // validate and set path
+    /* validate and set path */
     if (!isset($this->command) && isset($path)) {
       $path = trim($path);
 
@@ -39,7 +72,7 @@ class HTTPerf {
         throw new Exception($this->httperf . " not found.");
     }
 
-    // find httperf
+    /* find httperf */
     if (!isset($this->command) && !isset($this->httperf)) {
       $this->httperf = trim(shell_exec("which httperf"));
 
@@ -50,10 +83,21 @@ class HTTPerf {
     $this->options = array_merge(self::params(), $options);
   }
 
-  public function update_options($opt, $val) {
-    $this->options[$opt] = $val;
+  /**
+   * Update an option after instantiation.
+   *
+   * @param string $option Option key name.
+   * @param string $value Option key value.
+   */
+  public function updateOptions($option, $value) {
+    $this->options[$option] = $value;
   }
 
+  /**
+   * Return options array as stringified command arguments.
+   *
+   * @return string
+   */
   public function options() {
     $options = array();
     foreach ($this->options as $key => $val) {
@@ -76,12 +120,24 @@ class HTTPerf {
     return join(" ", $options);
   }
 
-  public function command($redir = true) {
+  /**
+   * Return final httperf command to be executed.
+   *
+   * @return string
+   */
+  public function command() {
     $command = (isset($this->command)) ? $this->command : ($this->httperf . " " . $this->options());
 
     return $command . " 2>&1";
   }
 
+  /**
+   * Run configured httperf command.
+   *
+   * @return string || mixed[] If 'parse' is true, a mixed[] containing parsed
+   * results will be returned. Otherwise, a string containing the raw results
+   * will be returned.
+   */
   public function run() {
     exec($this->command(), $output, $status);
 
@@ -99,6 +155,11 @@ class HTTPerf {
     return $this->raw;
   }
 
+  /**
+   * httperf arguement definition
+   *
+   * @return string[]
+   */
   private static function params() {
     return array(
       "add-header"       => null,

@@ -2,7 +2,7 @@
 require_once "helper.php";
 class HTTPerfTest extends UnitTestCase {
 
-  function test_init_empty() {
+  function testInitEmpty() {
     $httperf = new HTTPerf();
 
     $this->assertEqual(37 , count($httperf->options));
@@ -10,7 +10,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertFalse($httperf->parse);
   }
 
-  function test_init_params() {
+  function testInitParams() {
     $opts = array(
       "uri"   => "bar",
       "parse" => false
@@ -31,7 +31,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertEqual("httperf --uri /foo" , $httperf->command);
   }
 
-  function test_command_exception() {
+  function testCommandException() {
     $this->expectException();
 
     $opts = array(
@@ -42,7 +42,7 @@ class HTTPerfTest extends UnitTestCase {
     $httperf = new HTTPerf($opts);
   }
 
-  function test_invalid_command_exception() {
+  function testInvalidCommandException() {
     $this->expectException();
 
     $opts = array(
@@ -52,7 +52,7 @@ class HTTPerfTest extends UnitTestCase {
     $httperf = new HTTPerf($opts);
   }
 
-  function test_invalid_options_exception() {
+  function testInvalidOptionsException() {
     $this->expectException();
 
     $opts = array(
@@ -62,14 +62,14 @@ class HTTPerfTest extends UnitTestCase {
     $httperf = new HTTPerf($opts);
   }
 
-  function test_invalid_path_exception() {
+  function testInvalidPathException() {
     $this->expectException();
 
     $opts = array();
     $httperf = new HTTPerf($opts, "/bad");
   }
 
-  function test_update_options() {
+  function testUpdateOptions() {
     $opts = array(
       "uri"   => "bar"
     );
@@ -78,11 +78,11 @@ class HTTPerfTest extends UnitTestCase {
 
     $this->assertEqual("bar", $httperf->options["uri"]);
 
-    $httperf->update_options("uri", "boo");
+    $httperf->updateOptions("uri", "boo");
     $this->assertEqual("boo", $httperf->options["uri"]);
   }
 
-  function test_options() {
+  function testOptions() {
     $httperf = new HTTPerf();
     $this->assertEqual("", $httperf->options());
 
@@ -95,13 +95,13 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertEqual("--hog --uri=/foo", $httperf->options());
   }
 
-  function test_params() {
-    $method = TestHelper::get_private("HTTPerf", "params");
+  function testParams() {
+    $method = TestHelper::getPrivate("HTTPerf", "params");
     $params = $method->invoke(new HTTPerf());
     $this->assertEqual(37, count($params));
   }
 
-  function test_command() {
+  function testCommand() {
     $opts = array(
       "uri"     => "/foo",
       "hog"     => true,
@@ -115,7 +115,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertEqual("httperf --uri /foo 2>&1", $httperf->command());
   }
 
-  function test_run() {
+  function testRun() {
     $opts = array(
       "server"  => "www.google.com",
       "hog"     => true,
@@ -129,7 +129,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertPattern("/httperf --hog --server=www.google.com/", $result);
   }
 
-  function test_run_parser() {
+  function testRunParser() {
     $opts = array(
       "server"  => "www.google.com",
       "hog"     => true,
@@ -143,7 +143,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertFalse(isset($result["connection_time_75_pct"]));
     $this->assertFalse(isset($result["connection_time_99_pct"]));
 
-    $method = TestHelper::get_private("Parser", "expressions");
+    $method = TestHelper::getPrivate("Parser", "expressions");
     $expressions = $method->invoke(new Parser());
 
     foreach ($expressions as $key => $expression) {
@@ -151,7 +151,7 @@ class HTTPerfTest extends UnitTestCase {
     }
   }
 
-  function test_run_parser_verbose() {
+  function testRunParserVerbose() {
     $opts = array(
       "server"  => "www.google.com",
       "hog"     => true,
@@ -167,7 +167,7 @@ class HTTPerfTest extends UnitTestCase {
     $this->assertTrue(isset($result["connection_time_99_pct"]));
     $this->assertEqual(100, count($result["connection_times"]));
 
-    $method = TestHelper::get_private("Parser", "expressions");
+    $method = TestHelper::getPrivate("Parser", "expressions");
     $expressions = $method->invoke(new Parser());
 
     foreach ($expressions as $key => $expression) {

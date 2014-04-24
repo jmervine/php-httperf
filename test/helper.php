@@ -21,7 +21,7 @@ class TestHelper {
     return $httperf;
   }
 
-  public static function get_private($class, $method) {
+  public static function getPrivate($class, $method) {
     $class = new ReflectionClass($class);
     $method = $class->getMethod($method);
     $method->setAccessible(true);

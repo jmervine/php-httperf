@@ -13,8 +13,8 @@ require_once "helper.php";
 
 class ParserTest extends UnitTestCase {
 
-  function test_verbose_expression() {
-    $method = TestHelper::get_private("Parser", "verbose_expression");
+  function testVerboseExpression() {
+    $method = TestHelper::getPrivate("Parser", "verboseExpression");
     $parser = new Parser();
 
     $verbose_expression = $method->invoke($parser);
@@ -22,8 +22,8 @@ class ParserTest extends UnitTestCase {
     $this->assertPattern($verbose_expression, "Connection lifetime = 111.11");
   }
 
-  function test_expressions() {
-    $method = TestHelper::get_private("Parser", "expressions");
+  function testExpressions() {
+    $method = TestHelper::getPrivate("Parser", "expressions");
     $parser = new Parser();
 
     exec(TestHelper::httperf("--url /foo"), $out, $status);
@@ -36,8 +36,8 @@ class ParserTest extends UnitTestCase {
     }
   }
 
-  function test_percentiles() {
-    $method = TestHelper::get_private("Parser", "percentiles");
+  function testPercentiles() {
+    $method = TestHelper::getPrivate("Parser", "percentiles");
     $parser = new Parser();
 
     $percentiles = $method->invoke($parser);
@@ -47,13 +47,13 @@ class ParserTest extends UnitTestCase {
     $this->assertEqual(99, $percentiles[5]);
   }
 
-  function test_calculate_percentiles() {
+  function testCalculatePercentiles() {
     $parser = new Parser();
 
-    $method = TestHelper::get_private("Parser", "percentiles");
+    $method = TestHelper::getPrivate("Parser", "percentiles");
     $percentiles = $method->invoke($parser);
 
-    $method = TestHelper::get_private("Parser", "calculate_percentiles");
+    $method = TestHelper::getPrivate("Parser", "calculatePercentiles");
 
     $array = range(1, 100);
 
@@ -65,7 +65,7 @@ class ParserTest extends UnitTestCase {
     }
   }
 
-  function test_parser() {
+  function testParser() {
     $parser = new Parser();
 
     exec(TestHelper::httperf("--url /foo"), $out, $status);
@@ -75,7 +75,7 @@ class ParserTest extends UnitTestCase {
     $this->assertFalse(isset($matches["connection_time_75_pct"]));
     $this->assertFalse(isset($matches["connection_time_99_pct"]));
 
-    $method = TestHelper::get_private("Parser", "expressions");
+    $method = TestHelper::getPrivate("Parser", "expressions");
     $parser = new Parser();
     $expressions = $method->invoke($parser);
 
@@ -84,7 +84,7 @@ class ParserTest extends UnitTestCase {
     }
   }
 
-  function test_parser_verbose() {
+  function testParserVerbose() {
     exec(TestHelper::httperf("--verbose --url /foo"), $out, $status);
     $matches = Parser::parse($out);
 
@@ -94,7 +94,7 @@ class ParserTest extends UnitTestCase {
     $this->assertTrue(isset($matches["connection_time_99_pct"]));
     $this->assertEqual(100, count($matches["connection_times"]));
 
-    $method = TestHelper::get_private("Parser", "expressions");
+    $method = TestHelper::getPrivate("Parser", "expressions");
     $parser = new Parser();
     $expressions = $method->invoke($parser);
 

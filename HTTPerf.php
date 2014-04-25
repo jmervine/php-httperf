@@ -132,6 +132,108 @@ class HTTPerf {
   }
 
   /**
+   * Fork configured httperf command.
+   *
+   * @return resource Forks httperf command and returns popen resource.
+   */
+  public function fork() {
+    /**
+     * This really should allow for multiple forks, but to keep it simple
+     * in managing stdout and status, I'm not going to do that now.
+     * */
+    if (isset($this->proc))
+      throw new Exception('This fork is already running.');
+
+    /* Clear raw from previous runs. */
+    $this->raw = "";
+
+    set_time_limit(0);
+
+    $descriptorspec = array(
+      0 => array("pipe", "r"),  /* stdin is a pipe that the child will read from */
+      1 => array("pipe", "w"),  /* stdout is a pipe that the child will write to */
+      2 => array("pipe", "w")   /* stderr is a pipe that the child will write to */
+    );
+
+    $this->proc = proc_open($this->command(), $descriptorspec, $this->pipes);
+
+    fclose($this->pipes[0]);
+
+    /* ignoring stderr, because it's piped to stdout on command call */
+    fclose($this->pipes[2]);
+
+    stream_set_blocking($this->pipes[1], false);
+
+    return $this->proc;
+  }
+
+  /**
+   * Checks if passed process resource is running. Collects data from process
+   * resource output.
+   *
+   * This sets $this->raw with collected process output.
+   *
+   * If $this->parse is true, this also sets $this->result with parsed result
+   * array.
+   *
+   * @return boolean Process running.
+   */
+  public function forkRunning() {
+    if (!isset($this->proc))
+      return false;
+
+    $status = false;
+
+    if (feof($this->pipes[1])) {
+      fclose($this->pipes[1]);
+
+      $this->status = proc_close($this->proc);
+
+      unset($this->proc);
+
+      if (isset($this->parse) && $this->parse && $this->status === 0)
+        $this->result = Parser::parse($this->raw);
+
+      return false;
+    }
+
+    /* ignoring stderr, because it's piped to stdout on command call */
+    $this->raw .= fread($this->pipes[1], 10000);
+    return true;
+  }
+
+  /**
+   * Waits for passed process resource to complete. Collects data from process
+   * resource output.
+   *
+   * @param $wait  float    Wait time in seconds.
+   * @param $func  function Function to be called on each wait loop.
+   *
+   * @return string || mixed[] If 'parse' is true, a mixed[] containing parsed
+   * results will be returned. Otherwise, a string containing the raw results
+   * will be returned.
+   */
+  public function forkWait($wait=null, $func=null) {
+    if (!isset($wait))
+      $wait = 0.1; /* 100ms */
+
+    $wait = $wait * 1000000; /* convert to microseconds */
+
+    if (!isset($func))
+      $func = function() {};
+
+    while ($this->forkRunning($this->proc)) {
+      usleep($wait);
+      $func();
+    }
+
+    if (isset($this->result))
+      return $this->result;
+
+    return $this->raw;
+  }
+
+  /**
    * Run configured httperf command.
    *
    * @return string || mixed[] If 'parse' is true, a mixed[] containing parsed

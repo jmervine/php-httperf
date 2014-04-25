@@ -1,7 +1,7 @@
 <?php
 require_once "helper.php";
-class HTTPerfTest extends UnitTestCase {
 
+class HTTPerfTest extends UnitTestCase {
   function testInitEmpty() {
     $httperf = new HTTPerf();
 
@@ -104,21 +104,70 @@ class HTTPerfTest extends UnitTestCase {
   function testCommand() {
     $opts = array(
       "uri"     => "/foo",
-      "hog"     => true,
       "verbose" => false
     );
 
     $httperf = new HTTPerf($opts);
-    $this->assertPattern("/httperf --hog --uri=\/foo/", $httperf->command());
+    $this->assertPattern("/httperf --uri=\/foo/", $httperf->command());
 
     $httperf = new HTTPerf(array("command"=>"httperf --uri /foo"));
     $this->assertEqual("httperf --uri /foo 2>&1", $httperf->command());
   }
 
+  function testFork() {
+    $opts = array(
+      "server"  => "www.google.com",
+      "verbose" => false
+    );
+
+    $httperf = new HTTPerf($opts);
+
+    $proc = $httperf->fork();
+
+    $this->assertTrue($proc);
+    proc_close($proc); // terminate process
+  }
+
+  function testForkRunning() {
+    $opts = array(
+      "server"  => "www.google.com",
+      "verbose" => true
+    );
+
+    $httperf = new HTTPerf($opts);
+    $proc = $httperf->fork();
+
+    $this->assertTrue($proc);
+    $this->assertTrue($httperf->forkRunning());
+
+    while ($httperf->forkRunning()) {
+      sleep(1);
+    }
+
+    $this->assertFalse($httperf->forkRunning());
+  }
+
+  function testForkWait() {
+    $opts = array(
+      "server"  => "www.google.com",
+      "verbose" => true,
+      "parse"   => true
+    );
+
+    $httperf = new HTTPerf($opts);
+    $proc = $httperf->fork();
+
+    $this->assertTrue($proc);
+    $this->assertTrue($httperf->forkRunning());
+
+    $this->assertTrue(is_array($httperf->forkWait()));
+
+    $this->assertFalse($httperf->forkRunning());
+  }
+
   function testRun() {
     $opts = array(
       "server"  => "www.google.com",
-      "hog"     => true,
       "verbose" => false
     );
 
@@ -126,13 +175,12 @@ class HTTPerfTest extends UnitTestCase {
 
     $result = $httperf->run();
 
-    $this->assertPattern("/httperf --hog --server=www.google.com/", $result);
+    $this->assertPattern("/httperf .*--server=www.google.com/", $result);
   }
 
   function testRunParser() {
     $opts = array(
       "server"  => "www.google.com",
-      "hog"     => true,
       "parse"   => true
     );
 
@@ -154,7 +202,6 @@ class HTTPerfTest extends UnitTestCase {
   function testRunParserVerbose() {
     $opts = array(
       "server"  => "www.google.com",
-      "hog"     => true,
       "verbose" => true,
       "parse"   => true
     );

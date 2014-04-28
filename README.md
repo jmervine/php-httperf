@@ -3,6 +3,8 @@ HTTPerf.php [![Build Status](https://travis-ci.org/jmervine/php-httperf.svg?bran
 
 ##### Simple PHP port of [HTTPerf.rb](https://github.com/jmervine/httperfrb)
 
+> Should be condiered in development, or beta. Pull requests welcome, see [dev notes](#development) below.
+
 Simple PHP interface for [httperf](http://mervine.net/httperf).
 
 Tested via [Travis-CI](https://travis-ci.org/jmervine/php-httperf) on:
